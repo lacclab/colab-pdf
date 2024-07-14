@@ -9,7 +9,7 @@ def colab_pdf(file_name, notebookpath="/content/drive/MyDrive/Colab Notebooks/")
 
     # Using the defaults used by google.colab
     drive_mount_point = "/content/drive/"
-    gdrive_home = os.path.join(drive_mount_point, "My Drive/")
+    gdrive_home = os.path.join(drive_mount_point, "MyDrive/")
 
     # If the drive is not already mounted, attempt to mount it.
     if not os.path.isdir(gdrive_home):
@@ -23,20 +23,20 @@ def colab_pdf(file_name, notebookpath="/content/drive/MyDrive/Colab Notebooks/")
 
     # Installing all the recommended packages.
     get_ipython().system(
-        "apt update >> /dev/null && apt install texlive-xetex texlive-fonts-recommended texlive-generic-recommended >> /dev/null"
+        "apt update >> /dev/null && apt install pandoc texlive-xetex texlive-fonts-recommended texlive-plain-generic >> /dev/null"
     )
 
     # If pdf with the same name exists, remove it.
     pdf_file = os.path.join(gdrive_home, file_name.split(".")[0] + ".pdf")
-    
+
     if os.path.isfile(pdf_file):
         os.remove(pdf_file)
 
     # Attempt to convert to pdf and save it in Gdrive home dir using jupyter nbconvert command.
     try:
-        get_ipython().system(
-            "jupyter nbconvert --output-dir='$gdrive_home' '$notebookpath''$file_name' --to pdf"
-        )
+        command = f"jupyter nbconvert --output-dir='{gdrive_home}' '{notebookpath}{file_name}' --to pdf"
+        print(f"Running command: {command}")
+        get_ipython().system(command)
     except:
         return "nbconvert error"
 
